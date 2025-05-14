@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer-to-Peer Energy Trading</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="status-bar" style="z-index: 10;">
+        <span>9:41</span>
+        <div>
+            <span style="margin-left: -110px;">📶</span>
+            <span>100%</span>
+            <span>🔋</span>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="container">
+        <div style="display: flex; justify-content: center; margin: 0 auto;">
+            <img src="peerpower.jpeg" style="width: 300px; height: 175px;" alt="Peer Power">
+        </div>
+        <!-- Home Screen -->
+        <div class="content" id="home">
+            <div class="stat-card">
+            <div class="battery-container">
+                <div class="battery">
+                    <h3>EV Battery</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="--base-charge: 40%;"></div>
+                    </div>
+                    <p>40% Charged</p>
+                </div>
+                <div class="battery">
+                    <h3>Home Battery</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="--base-charge: 60%;"></div>
+                    </div>
+                    <p>60% Charged</p>
+                </div>
+            </div>
+        </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⚡</div>
+                    <h3>Electricity Demand</h3>
+                </div>
+                <h2><span id="demand-value">Loading...</span> MW</h2>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p class="text-muted" id="message">Loading...</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"></div>
+                    <h3>Power Network</h3>
+                </div>
+                <div class="stats-grid">
+                    <div>
+                        <h2><span id="wind-value">Loading...</span> MW</h2>
+                        <p class="text-muted">Renewable Generation</p>
+                    </div>
+                    <div>
+                        <h3>Wind Generation vs Demand</h3>
+                        <canvas id="graph" width="300" height="300"></canvas>
+                        
+                    </div>
+                </div>
+            </div>
+            <button class="button" onclick="navigate('buy')">
+                <span class="material-icons">bolt</span> Buy Energy
+            </button>
+            <button class="button" onclick="navigate('sell')">
+                <span class="material-icons">sell</span> Sell Energy
+            </button>
+        </div>
+
+ <!-- Buy Screen -->
+ <div class="content" id="buy">
+    <div class="stat-card">
+        <div class="battery-level">Select Battery:</div>
+        <select id="batterySelect" class="battery-select" onchange="updateBattery()">
+            <option value="ev" data-charge="40">EV Battery (40% Charged)</option>
+            <option value="home" data-charge="60">Home Battery (60% Charged)</option>
+        </select>
+        </div>
+        
+        <div class="stat-card">
+        <div class="annulus-container">
+            <div class="annulus" id="annulus">
+                <div class="annulus-base" id="annulusBase"></div>
+                <div class="annulus-additional" id="annulusAdditional"></div>
+            </div>
+            <div class="annulus-inner" id="annulusText">40%</div>
+        </div>
+        
+        <div class="slider-container">
+            <input type="range" id="energySlider" class="slider" min="0" max="100" step="1" value="40" oninput="updateBuyDisplay()">
+        </div>
+        
+        <div class="equivalency" id="equivalencyText">Equivalent to 4 kettles boiled</div>
+    </div>
+        <button class="confirm-button" onclick="openModal()">Confirm Purchase</button>
+
+        <div class="modal" id="buyModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Select a Seller</h3>
+                <div id="purchase-summary">
+                    <div class="battery">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="modalBar"></div>
+                    </div>
+                </div>
+                    <p id="charging-status">Charging to 60%</p>
+                </div>
+                <ul class="offer-list">
+                    <li class="offer">
+                        <span>Brendan - €0.30/kWh</span>
+                        <button onclick="completePurchase('Brendan', 0.30)">Buy</button>
+                    </li>
+                    <li class="offer">
+                        <span>Liam - €0.25/kWh</span>
+                        <button onclick="completePurchase('Liam', 0.25)">Buy</button>
+                    </li>
+
+                    <li class="offer">
+                        <span>Limit - €<input style="width: 50px;" type="number" id="limitNumber">/kWh</span>
+                        <button onclick="completePurchase('Limit', parseFloat(document.getElementById('limitNumber').value, 10))">Buy</button>
+                    </li>
+                </ul>
+                <button class="close-modal" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+</div>
+        
+<!-- Sell Screen -->
+<!--<div class="content" id="sell" style="display: none;">
+    <h2>Sell Energy</h2>
+    
+    <div class="input-group">
+        <label for="batterySelect">Select Battery:</label>
+        <select id="batterySelect" class="battery-select" onchange="updateBattery()">
+            <option value="ev" data-charge="40" data-capacity="50">EV Battery (40% Charged, 50 kWh)</option>
+            <option value="home" data-charge="60" data-capacity="100">Home Battery (60% Charged, 100 kWh)</option>
+        </select>
+    </div>
+    
+    <div class="slider-container">
+        <label for="energySlider">Select Energy to Sell (%):</label>
+        <input type="range" id="energySlider" class="slider" min="0" max="100" step="1" value="10" oninput="updateSellDisplay()">
+        <div class="slider-value" id="energyDisplay">10%</div>
+    </div>
+    
+    <div class="input-group">
+        <label for="price">Set Price (€ per kWh):</label>
+        <input type="number" id="price" class="price-input" placeholder="e.g., 0.50" value="0.50" step="0.01" oninput="updatePrice()">
+    </div>
+    
+    <div class="price-display" id="totalPrice">Total Sale Price: €5.00</div>
+    
+    <button class="confirm-button" onclick="confirmSale()">Confirm Sale</button>
+</div>-->
+<div class="content" id="sell" style="display: none;">
+    <div class="stat-card">
+        <div class="input-group">
+            <label for="batterySelectSell">Select Battery:</label>
+            <select id="batterySelectSell" class="battery-select" onchange="updateBatterySell()">
+                <option value="ev" data-charge="40" data-capacity="50">EV Battery (40% Charged, 50 kWh)</option>
+                <option value="home" data-charge="60" data-capacity="100">Home Battery (60% Charged, 100 kWh)</option>
+            </select>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="annulus-container-sell">
+            <div class="annulus-sell" id="annulusSell">
+                <div class="annulus-base-sell" id="annulusBaseSell"></div>
+                <div class="annulus-additional-sell" id="annulusAdditionalSell"></div>
+            </div>
+            <div class="annulus-inner-sell" id="annulusTextSell">40%</div>
+        </div>
+        <div class="slider-container">
+            <label for="energySliderSell">Select Energy to Sell (%):</label>
+            <input type="range" id="energySliderSell" class="slider" min="0" max="100" step="1" value="10" oninput="updateSellDisplay()">
+            <div class="slider-value" id="energyDisplaySell">10%</div>
+        </div>
+        <div class="input-group">
+            <label for="price">Set Price (€ per kWh):</label>
+            <input type="number" id="price" class="price-input" placeholder="0.27" value="0.27" step="0.01" oninput="updatePrice()" style="width: 80px;">
+        </div>
+        <div class="price-display" id="totalPrice">Total Sale Price: €5.00</div>
+        <button class="confirm-button" onclick="confirmSale()">Confirm Sale</button>
+    </div>
+</div>
+<br />
+<br />
+        <!-- Bottom Navigation -->
+        <div class="nav" style="margin-left: -20px; padding-bottom: 10px; width: 400px;">
+            <a href="#" onclick="navigate('home')">
+                <span class="material-icons">home</span> Home
+            </a>
+            <a href="#" onclick="navigate('buy')">
+                <span class="material-icons">bolt</span> Buy
+            </a>
+            <a href="#" onclick="navigate('sell')">
+                <span class="material-icons">sell</span> Sell
+            </a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="js/load.js"></script>
+    <script src="js/buy.js"></script>
+    <script src="js/sell.js"></script>
+    <script src="js/common.js"></script>
+</body>
+</html>
+

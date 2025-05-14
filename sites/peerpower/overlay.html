@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Mockup Overlay</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .phone-frame {
+            position: relative;
+            width: 375px; /* Base phone width */
+            height: 667px; /* Base phone height */
+            border: 16px solid #333;
+            border-radius: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-frame .top-bezel {
+            height: 30px;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-frame .top-bezel::before {
+            content: "";
+            width: 60px;
+            height: 8px;
+            background-color: #666;
+            border-radius: 4px;
+        }
+
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .phone-frame .chin-bar {
+            height: 60px;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 2px solid #222;
+        }
+
+        .phone-frame .chin-bar::before {
+            content: "";
+            width: 50px;
+            height: 50px;
+            background-color: #000;
+            border: 2px solid #666;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .phone-frame {
+                width: 300px;
+                height: 534px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phone-frame {
+                width: 240px;
+                height: 427px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="top-bezel"></div>
+        <div class="iframe-container">
+            <iframe src="/mockup.html"></iframe>
+        </div>
+        <div class="chin-bar"></div>
+    </div>
+</body>
+</html>

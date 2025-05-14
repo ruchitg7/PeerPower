@@ -1,0 +1,7 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "9007:3002"
+    restart: unless-stopped
